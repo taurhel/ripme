@@ -176,8 +176,9 @@ public class InstagramRipper extends AbstractJSONRipper {
         if (postRip) {
             return null;
         }
-        Predicate<String> hrefFilter = (storiesRip || pinnedReelRip) ? href -> href.contains("Consumer.js") :
-                href -> href.contains("ProfilePageContainer.js") || href.contains("TagPageContainer.js");
+        Predicate<String> hrefFilter = (hashtagRip || taggedRip || igtvRip || postRip || pinnedRip) ?
+                href -> href.contains("ProfilePageContainer.js") || href.contains("TagPageContainer.js") :
+                href -> href.contains("Consumer.js");
 
         String href = doc.select("link[rel=preload]").stream()
                          .map(link -> link.attr("href"))
@@ -433,7 +434,7 @@ public class InstagramRipper extends AbstractJSONRipper {
         for (int i = 0; i < list.size(); i++) {
             Statement st = list.get(i);
             if (st.toString().contains(keyword)) {
-                return list.get(i + offset).toString().replaceAll(".*\"([0-9a-f]*)\".*", "$1");
+                return list.get(i + offset).toString().replaceAll(".*\"([0-9a-f]{32,})\".*", "$1");
             }
         }
         return null;
